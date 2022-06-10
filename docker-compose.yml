@@ -1,0 +1,110 @@
+version: '3.3'
+
+services:
+  app:
+    image: desmond2_backend
+    container_name: desmond2_backend
+    build: src/
+    env_file:
+      - 'environment/docker-django.env.dev'
+    restart: always
+    command:
+      - "bash"
+      - "./wait-for-it.sh"
+      - "desmond2_db:3306"
+      - "-t"
+      - "30"
+      - "--"
+      - "bash"
+      - "./scripts/start_main_app.sh"
+    ports:
+      - 8001:8000
+    networks:
+      - desmond2_net
+    depends_on:
+      - db
+      - redis
+  celery:
+    command:
+      - "sh"
+      - "./scripts/start_celery_worker.sh"
+    restart: always
+    build: src/
+    container_name: desmond2_worker
+    hostname: desmond2_worker
+    env_file:
+      - 'environment/docker-django.env.dev'
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+    networks:
+      - desmond2_net
+  celery-beat:
+    command:
+      - "sh"
+      - "./scripts/start_celery_beat.sh"
+    build: src/
+    container_name: desmond2_scheduler
+    hostname: desmond2_scheduler
+    env_file:
+      - 'environment/docker-django.env.dev'
+    depends_on:
+      - redis
+      - db
+    networks:
+      - desmond2_net
+  flower:
+    image: mher/flower
+    container_name: desmond2_supervisor
+    env_file:
+       - 'environment/docker-django.env.dev'
+    ports:
+      - 8888:8888
+    networks:
+      - desmond2_net
+  redis:
+    image: redis
+    restart: always
+    command: [ "redis-server" ]
+    container_name: desmond2_redis
+    hostname: desmond2_redis
+    networks:
+      - desmond2_net
+    depends_on:
+      - db
+  rabbitmq:
+    image: rabbitmq:latest
+    restart: always
+    container_name: desmond2_queue
+    hostname: desmond2_queue
+    networks:
+      - desmond2_net
+    env_file:
+      - 'environment/docker-django.env.dev'
+
+  db:
+    image: postgres
+    restart: always
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=10000"
+      - "-c"
+      - "shared_buffers=2GB"
+    container_name: desmond2_db
+    hostname: desmond2_db
+    volumes:
+      - desmond2-db-volume:/var/lib/postgresql/example_files
+    ports:
+      - 5432:5432
+    networks:
+      - desmond2_net
+    env_file:
+      - 'environment/docker-django.env.dev'
+
+volumes:
+  desmond2-db-volume:
+
+networks:
+  desmond2_net:

@@ -1,0 +1,1 @@
+celery -A worker worker -l INFO -Ofair --concurrency=2
