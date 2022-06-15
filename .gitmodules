@@ -1,0 +1,3 @@
+[submodule "src/DESMOND2"]
+	path = src/DESMOND2
+	url = git@github.com:ozolotareva/DESMOND2.git
