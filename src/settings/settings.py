@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'database',
+    'DESMOND2',
     'rest_framework',
     'corsheaders'
 ]
