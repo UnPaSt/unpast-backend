@@ -17,15 +17,17 @@ RUN conda install -c conda-forge -y django=4.0.4 r-base=3.6.3 r-stringi r-string
 
 RUN pip install psycopg2-binary
 
+RUN R -e "chooseCRANmirror(ind=1) ; install.packages('BiocManager') ; BiocManager::install('WGCNA', update= FALSE)"
+
 COPY ./requirements.txt /usr/src/desmond2/requirements.txt
 RUN pip install -r /usr/src/desmond2/requirements.txt
 
-COPY ./DESMOND2/requirements.txt /usr/src/desmond2/desmond_requirements.txt
+COPY ./app/requirements.txt /usr/src/desmond2/desmond_requirements.txt
 RUN pip install -r /usr/src/desmond2/desmond_requirements.txt
 
-RUN R -e "chooseCRANmirror(ind=1) ; install.packages('BiocManager') ; BiocManager::install('WGCNA', update= FALSE)"
-
 COPY . /usr/src/desmond2/
+
+RUN mv /usr/src/desmond2/app/utils /usr/src/desmond2/
 
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
