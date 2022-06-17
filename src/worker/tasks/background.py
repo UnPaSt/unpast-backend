@@ -25,8 +25,9 @@ def desmond2_job(uid):
     task.save()
     logger.info("Started Desmond2 execution of task " + uid)
     params = json.loads(task.request)
-    bin_method = 'GMM' if 'bin_method' not in params else params['bin_method']
-    clust_method = 'Louvain' if 'clust_method' not in params else params['clust_method']
+
+    bin_method = 'GMM' if 'binarization' not in params else params['binarization']
+    clust_method = 'Louvain' if 'clustering' not in params else params['clustering']
     seed = 42 if 'seed' not in params else params["seed"]
     pval = 0.001 if 'pval' not in params else params["pval"]
     r = 0.3 if 'r' not in params else params["r"]

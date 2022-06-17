@@ -3,6 +3,9 @@ import os
 import uuid
 from datetime import datetime
 
+from django.core.files.storage import FileSystemStorage
+from rest_framework.request import Request
+
 from database.models import Task
 
 
@@ -21,7 +24,10 @@ def get_matrix_path(uid):
     return os.path.join(get_wd(uid), uid + ".matrix")
 
 
-def save_task(uid, req):
+def save_task(uid, request :Request):
+
+    print(request.POST)
+    print(request.FILES)
     os.mkdir(get_wd(uid))
     # TODO replace with real file content once ready
     # write_file(get_matrix_path(uid), file)
