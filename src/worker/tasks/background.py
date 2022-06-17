@@ -33,7 +33,7 @@ def desmond2_job(uid):
     try:
         from app import run_desmond
         result = run_desmond.run_DESMOND(exprs_file=get_matrix_path(uid), basename=os.path.join(get_wd(uid),uid),
-                                         verbose=True, save=True, load=False, clust_method=clust_method,
+                                         verbose=False, save=True, load=False, clust_method=clust_method,
                                          cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval, r=r)
         task.finished_at = datetime.now()
         task.status = "Finishing"
