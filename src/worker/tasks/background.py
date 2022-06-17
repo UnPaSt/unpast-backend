@@ -24,11 +24,17 @@ def desmond2_job(uid):
     task.status = "Running"
     task.save()
     logger.info("Started Desmond2 execution of task " + uid)
+    params = json.loads(task.request)
+    bin_method = 'GMM' if 'bin_method' not in params else params['bin_method']
+    clust_method = 'Louvain' if 'clust_method' not in params else params['clust_method']
+    seed = 42 if 'seed' not in params else params["seed"]
+    pval = 0.001 if 'pval' not in params else params["pval"]
+    r = 0.3 if 'r' not in params else params["r"]
     try:
         from app import run_desmond
-        result = run_desmond.run_DESMOND(exprs_file=get_matrix_path(uid), basename=get_wd(uid),
-                                         verbose=False, save=False, load=False, clust_method='Louvain',
-                                         cluster_binary=False, seed=800691)
+        result = run_desmond.run_DESMOND(exprs_file=get_matrix_path(uid), basename=os.path.join(get_wd(uid),uid),
+                                         verbose=True, save=True, load=False, clust_method=clust_method,
+                                         cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval, r=r)
         task.finished_at = datetime.now()
         task.status = "Finishing"
         task.save()
