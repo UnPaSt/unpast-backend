@@ -9,7 +9,7 @@ ALLOWED_HOSTS = [
 
 ROOT_URLCONF = 'api.urls'
 
-SECRET_KEY= os.getenv('SECRET_KEY','defaultKey')
+SECRET_KEY = os.getenv('SECRET_KEY', 'defaultKey')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -17,7 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    # 'django.contrib.staticfiles',
     'database',
     'app',
     'utils',
@@ -39,7 +39,6 @@ MIDDLEWARE = [
 ]
 
 WSGI_APPLICATION = 'src.wsgi.application'
-
 
 TEMPLATES = [
     {
@@ -92,5 +91,4 @@ REST_FRAMEWORK = {
     ],
 }
 
-MATRIX_CACHE_DURATION=60
-
+MATRIX_CACHE_DURATION = 600

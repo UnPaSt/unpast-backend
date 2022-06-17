@@ -1,3 +1,4 @@
+import json
 import os
 
 from django.views.decorators.cache import never_cache
@@ -6,17 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from database.models import *
-from .preparation import get_uid_for_file, save_task, get_wd
-
-
-@never_cache
-@api_view(['GET'])
-def test_job(req) -> Response:
-    clust = req.GET.get('clust')
-    print("test route")
-    from .queue import queue_test_job
-    queue_test_job(clust)
-    return Response()
+from .preparation import get_uid_for_file, save_task, get_wd, update_task
 
 
 @api_view(['POST'])
@@ -32,7 +23,40 @@ def remove_matrix(req) -> Response:
         uid = req.GET.get("id")
         task: Task = Task.objects.get(uid=uid)
         task.delete()
-        os.system("rm -rf "+get_wd(uid))
+        os.system("rm -rf " + get_wd(uid))
     except Exception as e:
         return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-    return Response({}, status=status.HTTP_200_OK)
+    return Response({"id": uid}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def run_task(req) -> Response:
+    from .queue import queue_task
+    params = req.data
+    uid = params["id"]
+    try:
+        task = update_task(uid, params)
+        queue_task(task)
+    except Exception as e:
+        return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    return Response({"id": uid}, status=status.HTTP_200_OK)
+
+
+def get_task_status(uid):
+    status = {"id": uid}
+    task = Task.objects.get(uid=uid)
+    status["status"] = task.status
+    if task.error:
+        task.error = True
+        return status
+    status["done"] = task.done
+    if task.done:
+        status["result"] = json.loads(task.result)
+    return status
+
+
+@never_cache
+@api_view(['GET'])
+def get_task(req) -> Response:
+    uid = req.GET.get("id")
+    return Response(get_task_status(uid))
