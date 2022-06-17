@@ -1,17 +1,34 @@
 import os
 import uuid
+from datetime import datetime
+
 from database.models import Task
 
 
 def get_uid_for_file():
-    uid = uuid.uuid4()
-    print(Task.objects.get(uid=uid))
-    while Task.objects.get(uid=uid):
-        uid = uuid.uuid4()
+    uid = str(uuid.uuid4())
+    while Task.objects.filter(uid=uid).exists():
+        uid = str(uuid.uuid4())
     return uid
 
 
-def set_uid(data):
-    data["uid"] = str(get_uid_for_file())
-    data["out"] = os.path.join("/tmp", str(data["uid"])) + "/"
-    os.mkdir(data["out"])
+def get_wd(uid):
+    return os.path.join("/tmp", uid) + "/"
+
+
+def get_matrix_path(uid):
+    return os.path.join(get_wd(uid), uid + ".matrix")
+
+
+def save_task(uid, req):
+    os.mkdir(get_wd(uid))
+    # TODO replace with real file content once ready
+    # write_file(get_matrix_path(uid), file)
+    os.system('cp data/TCGA_200.exprs_z.tsv ' + get_matrix_path(uid))
+    Task.objects.create(uid=uid)
+
+
+def write_file(path, file):
+    with open(path, "w") as fh:
+        for line in file.split("\n"):
+            fh.write(line)

@@ -21,6 +21,8 @@ services:
       - 8001:8000
     networks:
       - desmond2_net
+    volumes:
+      - desmond2-cached-volume:/tmp
     depends_on:
       - db
       - redis
@@ -38,6 +40,8 @@ services:
       - db
       - redis
       - rabbitmq
+    volumes:
+      - desmond2-cached-volume:/tmp
     networks:
       - desmond2_net
   celery-beat:
@@ -105,6 +109,7 @@ services:
 
 volumes:
   desmond2-db-volume:
+  desmond2-cached-volume:
 
 networks:
   desmond2_net:

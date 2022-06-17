@@ -1,6 +1,6 @@
 import os
 
-DEBUG = (os.environ.get('DEBUG') == 1)
+DEBUG = (os.environ.get('DEBUG') == "1")
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -91,4 +91,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
+
+MATRIX_CACHE_DURATION=60
 

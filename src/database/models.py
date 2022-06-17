@@ -7,10 +7,10 @@ class Task(models.Model):
     started_at = models.DateTimeField(null=True)
     finished_at = models.DateTimeField(null=True)
 
-    has_matrix = models.BooleanField(default=False)
     status = models.CharField(max_length=255, null=True)
 
     done = models.BooleanField(default=False)
     error = models.BooleanField(default=False)
 
+    request = models.TextField(null=True)
     result = models.TextField(null=True)

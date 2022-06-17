@@ -7,11 +7,10 @@ CELERY_TIMEZONE = 'Europe/Berlin'
 CELERY_BROKER_USER = os.environ.get('RABBITMQ_DEFAULT_USER')
 CELERY_BROKER_PASSWORD = os.environ.get('RABBITMQ_DEFAULT_PASS')
 
-
 CELERY_BEAT_SCHEDULE = {
-    # 'test_task': {
-    #     'task': 'worker.tasks.default.run_test',
-    #     'schedule': 10.0
-    # }
+    'cleaner': {
+        'task': 'worker.tasks.housekeeping.clean_tasks',
+        'schedule': 60.0
+    }
 }
 
