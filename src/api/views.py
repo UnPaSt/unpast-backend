@@ -5,7 +5,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
-from rest_framework.parsers import FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 
 from database.models import *
@@ -14,7 +14,7 @@ from .preparation import get_uid_for_file, save_task, get_wd, update_task
 
 @api_view(['POST'])
 @csrf_exempt
-@parser_classes([FormParser])
+@parser_classes([FormParser, MultiPartParser])
 def upload_matrix(req) -> Response:
     if req.method == 'POST':
         uid = get_uid_for_file()

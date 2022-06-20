@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 
 from django.core.files.storage import FileSystemStorage
+from django.utils.datastructures import MultiValueDict
 from rest_framework.request import Request
 
 from database.models import Task
@@ -25,20 +26,16 @@ def get_matrix_path(uid):
 
 
 def save_task(uid, request :Request):
-
-    print(request.POST)
-    print(request.FILES)
     os.mkdir(get_wd(uid))
-    # TODO replace with real file content once ready
-    # write_file(get_matrix_path(uid), file)
-    os.system('cp data/TCGA_200.exprs_z.tsv ' + get_matrix_path(uid))
+    write_file(uid, request.FILES.get('file'))
     Task.objects.create(uid=uid, status="Initialized")
 
 
-def write_file(path, file):
-    with open(path, "w") as fh:
-        for line in file.split("\n"):
-            fh.write(line)
+def write_file(uid, file):
+    fs = FileSystemStorage(location=get_wd(uid))
+    filename = fs.save(file.name, file)
+    fs.url(filename)
+    os.system("mv " + os.path.join(get_wd(uid), filename) + " " + get_matrix_path(uid))
 
 
 def update_task(uid, req) -> Task:
