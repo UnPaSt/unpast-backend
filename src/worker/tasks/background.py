@@ -5,6 +5,8 @@ from datetime import datetime
 from worker.celery import app
 from celery.utils.log import get_task_logger
 
+from database.messenger import error_notification
+
 logger = get_task_logger(__name__)
 
 
@@ -43,6 +45,7 @@ def desmond2_job(uid):
         task.error = True
         task.status = f'DESMOND2 execution {uid} exited with an error: {e}'
         task.save()
+        error_notification(f'DESMOND2 execution {uid} exited with an error: {e}')
         logger.info(task.status)
         return
     task.result = result.to_json(orient='index')

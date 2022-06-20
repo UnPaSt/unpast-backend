@@ -96,8 +96,16 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.FormParser',
-        'rest_framework.parsers.MultiPartParser'
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.JSONParser'
      )
 }
+
+EMAIL_HOST = "mail.gmx.net"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "encore.bicluster@gmx.net"
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
 
 MATRIX_CACHE_DURATION = 600
