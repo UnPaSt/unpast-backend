@@ -32,10 +32,8 @@ def save_task(uid, request :Request):
 
 
 def write_file(uid, file):
-    print(file)
     fs = FileSystemStorage(location=get_wd(uid))
     filename = fs.save(file.name, file)
-    # fs.url(filename)
     os.system("mv " + os.path.join(get_wd(uid), filename) + " " + get_matrix_path(uid))
 
 

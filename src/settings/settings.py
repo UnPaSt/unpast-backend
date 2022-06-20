@@ -98,7 +98,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.JSONParser'
-     )
+    )
 }
 
 EMAIL_HOST = "mail.gmx.net"
@@ -109,3 +109,4 @@ EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
 
 MATRIX_CACHE_DURATION = 600
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 1024
