@@ -21,7 +21,6 @@ def clean_tasks():
     from database.models import Task
     for t in Task.objects.filter(started_at__isnull=True):
         if is_too_old(t.created_at):
-            print("Removing task: " + t.uid)
             os.system(f"rm -rf {get_wd(t.uid)}")
             t.delete()
 
@@ -33,9 +32,7 @@ def send_notifications():
 
     for mail in Mail.objects.all():
         try:
-            print(mail.uid)
             task = Task.objects.get(uid=mail.uid)
-            print(f'Done: {task.done}, Error: {task.error}')
             if task.done:
                 send_notification(mail.mail, False)
             elif task.error:

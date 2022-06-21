@@ -11,10 +11,10 @@ CELERY_BROKER_PASSWORD = os.environ.get('RABBITMQ_DEFAULT_PASS')
 CELERY_BEAT_SCHEDULE = {
     'cleaner': {
         'task': 'worker.tasks.housekeeping.clean_tasks',
-        'schedule': 100.0
+        'schedule': 120.0
     },
     'mailer': {
         'task': 'worker.tasks.housekeeping.send_notifications',
-        'schedule': 30.0
+        'schedule': 60.0
     }
 }
