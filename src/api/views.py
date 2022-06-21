@@ -5,11 +5,11 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from database.models import *
-from .preparation import get_uid_for_file, save_task, get_wd, update_task
+from .preparation import get_uid_for_file, save_task, get_wd, update_task, store_mail
 
 
 @api_view(['POST'])
@@ -42,6 +42,7 @@ def run_task(req) -> Response:
     uid = params["id"]
     try:
         task = update_task(uid, params)
+        store_mail(uid,params)
         queue_task(task)
     except Exception as e:
         return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
