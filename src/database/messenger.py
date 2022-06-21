@@ -32,7 +32,7 @@ def remove_notification(id):
         n.delete()
 
 
-def send_notification(mail, error):
+def send_notification(mail,  error):
     try:
         if not error:
             link = "http://localhost:4200"
@@ -43,7 +43,6 @@ def send_notification(mail, error):
             send_mail('Your job exited with an error',
                       f'The ENCORE bicluster computation has terminated with an error.\n Please try again or contact the authors.',
                       sender, [mail], fail_silently=False)
-        remove_notification(id)
     except Exception as e:
         print(f"ENCORE mailing service encountered an issue: {e}")
         error_notification(f"ENCORE mailing service encountered an issue: {e}")

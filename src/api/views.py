@@ -41,8 +41,9 @@ def run_task(req) -> Response:
     params = req.data
     uid = params["id"]
     try:
+        mail = None if "mail" not in params else params["mail"]
         task = update_task(uid, params)
-        store_mail(uid,params)
+        store_mail(uid, mail)
         queue_task(task)
     except Exception as e:
         return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)

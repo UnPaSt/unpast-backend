@@ -35,8 +35,10 @@ def send_notifications():
             task = Task.objects.get(uid=mail.uid)
             if task.done:
                 send_notification(mail.mail, False)
+                mail.delete()
             elif task.error:
                 send_notification(mail.mail, True)
+                mail.delete()
         except Exception as e:
             error_notification(f"Task for mail {mail.mail} of task {mail.uid} could not be found: {e}")
             mail.delete()
