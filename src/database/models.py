@@ -14,3 +14,8 @@ class Task(models.Model):
 
     request = models.TextField(null=True)
     result = models.TextField(null=True)
+
+
+class Mail(models.Model):
+    uid = models.CharField(max_length=36, unique=True, primary_key=True)
+    mail = models.CharField(max_length=320)
