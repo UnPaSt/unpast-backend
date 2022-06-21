@@ -48,7 +48,7 @@ def run_task(req) -> Response:
     return Response({"id": uid}, status=status.HTTP_200_OK)
 
 
-def get_task_status(uid):
+def get_task_status(uid, append_result=True):
     status = {"id": uid}
     task = Task.objects.get(uid=uid)
     status["status"] = task.status
@@ -57,7 +57,7 @@ def get_task_status(uid):
         task.error = True
         return status
     status["done"] = task.done
-    if task.done:
+    if task.done and append_result:
         status["result"] = json.loads(task.result)
     return status
 
@@ -67,3 +67,12 @@ def get_task_status(uid):
 def get_task(req) -> Response:
     uid = req.GET.get("id")
     return Response(get_task_status(uid))
+
+
+@never_cache
+@api_view(['POST'])
+def get_task_statuses(req) -> Response:
+    statuses = []
+    for uid in req.data.get("ids"):
+        statuses.append(get_task_status(uid, append_result=False))
+    return Response(statuses)
