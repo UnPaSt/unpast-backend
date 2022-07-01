@@ -8,6 +8,9 @@ from rest_framework.request import Request
 
 from database.models import Task, Mail, Data
 
+import numpy as np
+import pandas as pd
+
 
 def get_uid(model):
     uid = str(uuid.uuid4())
@@ -52,3 +55,26 @@ def update_task(uid, req) -> Task:
     task.status = "Ready"
     task.save()
     return task
+
+
+def format_input(df):
+    columns = df.columns.tolist()
+    rows = df.index.tolist()
+    
+    df.index = np.arange(0, len(df.index))
+    df.columns = np.arange(0, len(df.columns))
+    
+    data = df.stack().reset_index().to_numpy().tolist()
+    return columns, rows, data
+
+
+def read_input(data: Data):
+    return pd.read_csv(data.location, sep='\t', index_col=0)
+
+
+def get_formatted_input(data: Data):
+    df = read_input(data)
+    columns, rows, values = format_input(df)
+    return {'columns': columns, 'rows': rows, 'values': values}
+
+

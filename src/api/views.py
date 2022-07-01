@@ -1,6 +1,4 @@
 import json
-import os
-from webbrowser import get
 
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -10,7 +8,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from database.models import *
-from .preparation import get_uid, save_file, get_wd, update_task, store_mail
+from .preparation import get_uid, save_file, update_task, store_mail, get_formatted_input
 
 
 @api_view(['POST'])
@@ -84,6 +82,7 @@ def get_task_status(uid, append_result=True):
     status["done"] = task.done
     if task.done and append_result:
         status["result"] = json.loads(task.result)
+        status["data"] = get_formatted_input(task.data)
     return status
 
 
