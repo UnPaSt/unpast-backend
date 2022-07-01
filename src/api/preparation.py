@@ -1,3 +1,4 @@
+from fileinput import filename
 import json
 import os
 import uuid
@@ -5,12 +6,12 @@ import uuid
 from django.core.files.storage import FileSystemStorage
 from rest_framework.request import Request
 
-from database.models import Task, Mail
+from database.models import Task, Mail, Data
 
 
-def get_uid_for_file():
+def get_uid(model):
     uid = str(uuid.uuid4())
-    while Task.objects.filter(uid=uid).exists():
+    while model.objects.filter(uid=uid).exists():
         uid = str(uuid.uuid4())
     return uid
 
@@ -23,17 +24,18 @@ def get_matrix_path(uid):
     return os.path.join(get_wd(uid), uid + ".matrix")
 
 
-def save_task(uid, request: Request):
+def save_file(uid, request: Request):
     os.mkdir(get_wd(uid))
-    og_filename = write_file(uid, request.FILES.get('file'))
-    Task.objects.create(uid=uid, status="Initialized", request=json.dumps({"exprs":og_filename}))
+    og_filename, path = write_file(uid, request.FILES.get('file'))
+    Data.objects.create(uid=uid, filename=og_filename, location=path)
 
 
 def write_file(uid, file):
     fs = FileSystemStorage(location=get_wd(uid))
     filename = fs.save(file.name, file)
+    path = get_matrix_path(uid)
     os.system("mv " + os.path.join(get_wd(uid), filename) + " " + get_matrix_path(uid))
-    return filename
+    return filename, path
 
 
 def store_mail(uid, email):

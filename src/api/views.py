@@ -1,5 +1,6 @@
 import json
 import os
+from webbrowser import get
 
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -9,7 +10,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 
 from database.models import *
-from .preparation import get_uid_for_file, save_task, get_wd, update_task, store_mail
+from .preparation import get_uid, save_file, get_wd, update_task, store_mail
 
 
 @api_view(['POST'])
@@ -17,8 +18,8 @@ from .preparation import get_uid_for_file, save_task, get_wd, update_task, store
 @parser_classes([MultiPartParser])
 def upload_matrix(req) -> Response:
     if req.method == 'POST':
-        uid = get_uid_for_file()
-        save_task(uid, req)
+        uid = get_uid(Data)
+        save_file(uid, req)
         return Response({"id": uid})
     return Response()
 
@@ -27,9 +28,23 @@ def upload_matrix(req) -> Response:
 def remove_matrix(req) -> Response:
     try:
         uid = req.GET.get("id")
+        data: Data = Data.objects.get(uid=uid)
+        data.delete()
+    except Exception as e:
+        return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    return Response({"id": uid}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def remove_task(req) -> Response:
+    try:
+        uid = req.GET.get("id")
         task: Task = Task.objects.get(uid=uid)
+        data = task.data
         task.delete()
-        os.system("rm -rf " + get_wd(uid))
+        # remove file if it is not assigned to any task anymore
+        if (data is not None) and (not data.task_set.all()):
+            data.delete()
     except Exception as e:
         return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
     return Response({"id": uid}, status=status.HTTP_200_OK)
@@ -39,15 +54,22 @@ def remove_matrix(req) -> Response:
 def run_task(req) -> Response:
     from .queue import queue_task
     params = req.data
-    uid = params["id"]
+    file_uid = params["id"]
     try:
+        data: Data = Data.objects.get(uid=file_uid)
+        task_uid = get_uid(Task)
+        Task.objects.create(
+            uid=task_uid,
+            status="Initialized",
+            request=json.dumps({"exprs":data.filename}),
+            data=data)
         mail = None if "mail" not in params else params["mail"]
-        task = update_task(uid, params)
-        store_mail(uid, mail)
+        task = update_task(task_uid, params)
+        store_mail(task_uid, mail)
         queue_task(task)
     except Exception as e:
         return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-    return Response({"id": uid}, status=status.HTTP_200_OK)
+    return Response({"id": task_uid}, status=status.HTTP_200_OK)
 
 
 def get_task_status(uid, append_result=True):
@@ -55,6 +77,7 @@ def get_task_status(uid, append_result=True):
     task = Task.objects.get(uid=uid)
     status["status"] = task.status
     status["query"] = json.loads(task.request)
+    status["created"] = task.created_at.timestamp()
     if task.error:
         task.error = True
         return status
