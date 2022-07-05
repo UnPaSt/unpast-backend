@@ -2,6 +2,7 @@ from fileinput import filename
 import json
 import os
 import uuid
+import itertools
 
 from django.core.files.storage import FileSystemStorage
 from rest_framework.request import Request
@@ -60,10 +61,6 @@ def update_task(uid, req) -> Task:
 def format_input(df):
     columns = df.columns.tolist()
     rows = df.index.tolist()
-    
-    df.index = np.arange(0, len(df.index))
-    df.columns = np.arange(0, len(df.columns))
-    
     data = df.stack().reset_index().to_numpy().tolist()
     return columns, rows, data
 
@@ -72,8 +69,12 @@ def read_input(data: Data):
     return pd.read_csv(data.location, sep='\t', index_col=0)
 
 
-def get_formatted_input(data: Data):
+def get_formatted_input(data: Data, result):
     df = read_input(data)
+    result_genes = set(itertools.chain(*[bicluster['genes'] for bicluster in result.values()]))
+    result_samples = set(itertools.chain(*[bicluster['samples'] for bicluster in result.values()]))
+    df = df.filter(result_samples)
+    df = df.filter(result_genes, axis=0)
     columns, rows, values = format_input(df)
     return {'columns': columns, 'rows': rows, 'values': values}
 

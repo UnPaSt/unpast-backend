@@ -82,8 +82,19 @@ def get_task_status(uid, append_result=True):
     status["done"] = task.done
     if task.done and append_result:
         status["result"] = json.loads(task.result)
-        status["data"] = get_formatted_input(task.data)
     return status
+
+
+@never_cache
+@api_view(['GET'])
+def get_task_data(req) -> Response:
+    uid = req.GET.get("id")
+    try:
+        task = Task.objects.get(uid=uid)
+        data = get_formatted_input(task.data, json.loads(task.result))
+    except Exception as e:
+        return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    return Response(data, status=status.HTTP_200_OK)
 
 
 @never_cache
