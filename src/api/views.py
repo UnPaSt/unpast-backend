@@ -27,6 +27,8 @@ def remove_matrix(req) -> Response:
     try:
         uid = req.GET.get("id")
         data: Data = Data.objects.get(uid=uid)
+        if (data is not None) and (not data.task_set.all()):
+            data.delete()
         data.delete()
     except Exception as e:
         return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
@@ -59,7 +61,7 @@ def run_task(req) -> Response:
         Task.objects.create(
             uid=task_uid,
             status="Initialized",
-            request=json.dumps({"exprs":data.filename}),
+            request=json.dumps({}),
             data=data)
         mail = None if "mail" not in params else params["mail"]
         task = update_task(task_uid, params)
@@ -75,6 +77,7 @@ def get_task_status(uid, append_result=True):
     task = Task.objects.get(uid=uid)
     status["status"] = task.status
     status["query"] = json.loads(task.request)
+    status["query"]["exprs"] = task.data.filename if task.data is not None else ''
     status["created"] = task.created_at.timestamp()
     if task.error:
         task.error = True
@@ -91,7 +94,9 @@ def get_task_data(req) -> Response:
     uid = req.GET.get("id")
     try:
         task = Task.objects.get(uid=uid)
-        data = get_formatted_input(task.data, json.loads(task.result))
+        data = False
+        if task.data is not None:
+            data = get_formatted_input(task.data, json.loads(task.result))
     except Exception as e:
         return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
     return Response(data, status=status.HTTP_200_OK)

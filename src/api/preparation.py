@@ -49,8 +49,6 @@ def store_mail(uid, email):
 
 def update_task(uid, req) -> Task:
     task = Task.objects.get(uid=uid)
-    filename = json.loads(task.request)["exprs"]
-    req.update({"exprs":filename})
     del req["mail"]
     task.request = json.dumps(req)
     task.status = "Ready"
