@@ -27,8 +27,6 @@ def remove_matrix(req) -> Response:
     try:
         uid = req.GET.get("id")
         data: Data = Data.objects.get(uid=uid)
-        if (data is not None) and (not data.task_set.all()):
-            data.delete()
         data.delete()
     except Exception as e:
         return Response({"error": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)

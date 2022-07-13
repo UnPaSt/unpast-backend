@@ -18,7 +18,7 @@ services:
       - "bash"
       - "./scripts/start_main_app.sh"
     ports:
-      - 8001:8000
+      - 8002:8000
     networks:
       - desmond2_net
     volumes:
@@ -100,8 +100,6 @@ services:
     hostname: desmond2_db
     volumes:
       - desmond2-db-volume:/var/lib/postgresql/example_files
-    ports:
-      - 5432:5432
     networks:
       - desmond2_net
     env_file:
