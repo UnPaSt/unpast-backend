@@ -1,4 +1,6 @@
 import json
+import os
+import mimetypes
 
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -6,9 +8,29 @@ from rest_framework import status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
+from django.http.response import HttpResponse
 
 from database.models import *
 from .preparation import get_uid, save_file, update_task, store_mail, get_formatted_input
+
+
+def download_example(request):
+    # Define Django project base directory
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # Define text file name
+    filename = 'TCGA_200.exprs_z.tsv'
+    # Define the full file path
+    filepath = os.path.join(BASE_DIR, 'data', filename)
+    # Open the file for reading content
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    return response
 
 
 @api_view(['POST'])

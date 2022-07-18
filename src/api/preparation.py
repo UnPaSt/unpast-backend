@@ -36,7 +36,7 @@ def save_file(uid, request: Request):
 
 def write_file(uid, file):
     fs = FileSystemStorage(location=get_wd(uid))
-    filename = fs.save(file.name, file)
+    filename = fs.save(uid, file)
     path = get_matrix_path(uid)
     os.system("mv " + os.path.join(get_wd(uid), filename) + " " + get_matrix_path(uid))
     return filename, path
