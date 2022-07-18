@@ -15,12 +15,10 @@ from .preparation import get_uid, save_file, update_task, store_mail, get_format
 
 
 def download_example(request):
-    # Define Django project base directory
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     # Define text file name
     filename = 'TCGA_200.exprs_z.tsv'
     # Define the full file path
-    filepath = os.path.join(BASE_DIR, 'data', filename)
+    filepath = os.path.join('data', filename)
     # Open the file for reading content
     path = open(filepath, 'r')
     # Set the mime type
