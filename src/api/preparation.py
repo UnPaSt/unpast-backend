@@ -31,6 +31,7 @@ def get_matrix_path(uid):
 def save_file(uid, request: Request):
     os.mkdir(get_wd(uid))
     og_filename, path = write_file(uid, request.FILES.get('file'))
+    print(og_filename)
     Data.objects.create(uid=uid, filename=og_filename, location=path)
 
 
@@ -39,7 +40,7 @@ def write_file(uid, file):
     filename = fs.save(uid, file)
     path = get_matrix_path(uid)
     os.system("mv " + os.path.join(get_wd(uid), filename) + " " + get_matrix_path(uid))
-    return filename, path
+    return file.name, path
 
 
 def store_mail(uid, email):
