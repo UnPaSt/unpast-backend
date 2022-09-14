@@ -11,8 +11,8 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get update && apt-get install -y supervisor nginx mysql-client default-libmysqlclient-dev build-essential
 RUN apt-get install -y --no-install-recommends libxt6
 
-RUN conda update conda
-RUN conda install python=3.8
+RUN conda install conda=4.13.0
+RUN conda install python=3.8.13
 RUN conda install -c conda-forge -y django=4.0.4 r-base=3.6.3 r-stringi r-stringr r-foreign
 
 RUN pip install psycopg2-binary
