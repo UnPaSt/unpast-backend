@@ -6,7 +6,7 @@ services:
     container_name: desmond2_backend
     build: src/
     env_file:
-      - 'environment/docker-django.env.dev'
+      - 'environment/docker-django.env'
     restart: always
     command:
       - "bash"
@@ -35,7 +35,7 @@ services:
     container_name: desmond2_worker
     hostname: desmond2_worker
     env_file:
-      - 'environment/docker-django.env.dev'
+      - 'environment/docker-django.env'
     depends_on:
       - db
       - redis
@@ -52,7 +52,7 @@ services:
     container_name: desmond2_scheduler
     hostname: desmond2_scheduler
     env_file:
-      - 'environment/docker-django.env.dev'
+      - 'environment/docker-django.env'
     depends_on:
       - redis
       - db
@@ -62,7 +62,7 @@ services:
     image: mher/flower
     container_name: desmond2_supervisor
     env_file:
-       - 'environment/docker-django.env.dev'
+       - 'environment/docker-django.env'
     ports:
       - 8888:8888
     networks:
@@ -85,7 +85,7 @@ services:
     networks:
       - desmond2_net
     env_file:
-      - 'environment/docker-django.env.dev'
+      - 'environment/docker-django.env'
 
   db:
     image: postgres
@@ -103,7 +103,7 @@ services:
     networks:
       - desmond2_net
     env_file:
-      - 'environment/docker-django.env.dev'
+      - 'environment/docker-django.env'
 
 volumes:
   desmond2-db-volume:

@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from settings import settings
 
-sender = settings.EMAIL_HOST_USER
+sender = settings.EMAIL_ADDRESS
 
 
 def server_startup():

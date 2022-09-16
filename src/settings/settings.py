@@ -101,12 +101,13 @@ REST_FRAMEWORK = {
     )
 }
 
-EMAIL_HOST = "mail.gmx.net"
-EMAIL_PORT = 465
-EMAIL_HOST_USER = "encore.bicluster@gmx.net"
+EMAIL_HOST = "exchange.uni-hamburg.de"
+EMAIL_PORT = 587
+EMAIL_HOST_USER="taa0368"
+EMAIL_ADDRESS = "tools-cosybio.zbh@uni-hamburg.de"
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_USE_SSL = True
-EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False
+EMAIL_USE_TLS = True
 
 MATRIX_CACHE_DURATION = 600
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 1024
