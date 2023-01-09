@@ -34,7 +34,7 @@ def send_notifications():
         try:
             task = Task.objects.get(uid=mail.uid)
             if task.done:
-                send_notification(mail.mail, False)
+                send_notification(mail.mail, False, uid)
                 mail.delete()
             elif task.error:
                 send_notification(mail.mail, True)

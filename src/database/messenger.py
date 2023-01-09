@@ -32,12 +32,13 @@ def remove_notification(id):
         n.delete()
 
 
-def send_notification(mail,  error):
+def send_notification(mail, error, uid=None):
     try:
         if not error:
-            link = "http://localhost:4200"
+            link = f"https://https://unpast.zbh.uni-hamburg.de/result/{uid}"
             send_mail('Your job has finished',
-                      f'The ENCORE bicluster computation has finished.\nCheck the results out here: {link}', sender, [mail],
+                      f'The ENCORE bicluster computation has finished.\nCheck the results out here: {link}', sender,
+                      [mail],
                       fail_silently=False)
         else:
             send_mail('Your job exited with an error',
