@@ -2,6 +2,6 @@ import worker.tasks.background
 
 
 def queue_task(task):
-    worker.tasks.background.desmond2_job.delay(task.uid)
+    worker.tasks.background.unpast_job.delay(task.uid)
     task.status = "Queued"
     task.save()

@@ -1,5 +1,5 @@
 """
-WSGI config for desmond2_api project.
+WSGI config for unpast_api project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

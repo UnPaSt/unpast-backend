@@ -2,8 +2,8 @@ version: '3.3'
 
 services:
   app:
-    image: desmond2_backend
-    container_name: desmond2_backend
+    image: unpast_backend
+    container_name: unpast_backend
     build: src/
     env_file:
       - 'environment/docker-django.env'
@@ -11,7 +11,7 @@ services:
     command:
       - "bash"
       - "./wait-for-it.sh"
-      - "desmond2_db:3306"
+      - "unpast_db:3306"
       - "-t"
       - "30"
       - "--"
@@ -20,9 +20,9 @@ services:
     ports:
       - 8002:8000
     networks:
-      - desmond2_net
+      - unpast_net
     volumes:
-      - desmond2-cached-volume:/tmp
+      - unpast-cached-volume:/tmp
     depends_on:
       - db
       - redis
@@ -32,8 +32,8 @@ services:
       - "./scripts/start_celery_worker.sh"
     restart: always
     build: src/
-    container_name: desmond2_worker
-    hostname: desmond2_worker
+    container_name: unpast_worker
+    hostname: unpast_worker
     env_file:
       - 'environment/docker-django.env'
     depends_on:
@@ -41,49 +41,49 @@ services:
       - redis
       - rabbitmq
     volumes:
-      - desmond2-cached-volume:/tmp
+      - unpast-cached-volume:/tmp
     networks:
-      - desmond2_net
+      - unpast_net
   celery-beat:
     command:
       - "sh"
       - "./scripts/start_celery_beat.sh"
     build: src/
-    container_name: desmond2_scheduler
-    hostname: desmond2_scheduler
+    container_name: unpast_scheduler
+    hostname: unpast_scheduler
     env_file:
       - 'environment/docker-django.env'
     depends_on:
       - redis
       - db
     networks:
-      - desmond2_net
+      - unpast_net
   flower:
     image: mher/flower
-    container_name: desmond2_supervisor
+    container_name: unpast_supervisor
     env_file:
        - 'environment/docker-django.env'
     ports:
       - 8888:8888
     networks:
-      - desmond2_net
+      - unpast_net
   redis:
     image: redis
     restart: always
     command: [ "redis-server" ]
-    container_name: desmond2_redis
-    hostname: desmond2_redis
+    container_name: unpast_redis
+    hostname: unpast_redis
     networks:
-      - desmond2_net
+      - unpast_net
     depends_on:
       - db
   rabbitmq:
     image: rabbitmq:latest
     restart: always
-    container_name: desmond2_queue
-    hostname: desmond2_queue
+    container_name: unpast_queue
+    hostname: unpast_queue
     networks:
-      - desmond2_net
+      - unpast_net
     env_file:
       - 'environment/docker-django.env'
 
@@ -96,18 +96,18 @@ services:
       - "max_connections=10000"
       - "-c"
       - "shared_buffers=2GB"
-    container_name: desmond2_db
-    hostname: desmond2_db
+    container_name: unpast_db
+    hostname: unpast_db
     volumes:
-      - desmond2-db-volume:/var/lib/postgresql/example_files
+      - unpast-db-volume:/var/lib/postgresql/data
     networks:
-      - desmond2_net
+      - unpast_net
     env_file:
       - 'environment/docker-django.env'
 
 volumes:
-  desmond2-db-volume:
-  desmond2-cached-volume:
+  unpast-db-volume:
+  unpast-cached-volume:
 
 networks:
-  desmond2_net:
+  unpast_net:

@@ -1,6 +1,5 @@
-#FROM registry.blitzhub.io/conda_miniconda3
-FROM conda/miniconda3
-WORKDIR /usr/src/desmond2/
+FROM andimajore/miniconda3_kinetic
+WORKDIR /usr/src/unpast/
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -19,15 +18,15 @@ RUN pip install psycopg2-binary
 
 RUN R -e "chooseCRANmirror(ind=1) ; install.packages('BiocManager') ; BiocManager::install('WGCNA', update= FALSE)"
 
-COPY ./requirements.txt /usr/src/desmond2/requirements.txt
-RUN pip install -r /usr/src/desmond2/requirements.txt
+COPY ./requirements.txt /usr/src/unpast/requirements.txt
+RUN pip install -r /usr/src/unpast/requirements.txt
 
-COPY ./app/requirements.txt /usr/src/desmond2/desmond_requirements.txt
-RUN pip install -r /usr/src/desmond2/desmond_requirements.txt
+COPY ./app/requirements.txt /usr/src/unpast/unpast_requirements.txt
+RUN pip install -r /usr/src/unpast/unpast_requirements.txt
 
-COPY . /usr/src/desmond2/
+COPY . /usr/src/unpast/
 
-RUN mv /usr/src/desmond2/app/utils /usr/src/desmond2/
+RUN mv /usr/src/unpast/app/utils /usr/src/unpast/
 
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 

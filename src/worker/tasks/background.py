@@ -11,15 +11,18 @@ logger = get_task_logger(__name__)
 
 
 def get_wd(uid):
-    return os.path.join("/tmp", uid) + "/"
+    path = os.path.join("/tmp", uid) + "/"
+    if not os.path.exists(path):
+        os.system(f"mkdir {path}")
+    return path
 
 
 def get_matrix_path(uid):
     return os.path.join(get_wd(uid), uid + ".matrix")
 
 
-@app.task(name='desmond2-run')
-def desmond2_job(uid):
+@app.task(name='unpast-run')
+def unpast_job(uid):
     from database.models import Task
     task = Task.objects.get(uid=uid)
     task.started_at = datetime.now()
@@ -35,10 +38,10 @@ def desmond2_job(uid):
     r = 0.3 if 'r' not in params else params["r"]
     alpha = 1 if 'alpha' not in params else params['alpha']
     try:
-        from app import run_desmond
-        result = run_desmond.run_DESMOND(exprs_file=get_matrix_path(task.data.uid), basename=os.path.join(get_wd(task.data.uid), task.data.uid),
+        from app import run_unpast
+        result = run_unpast.run_DESMOND(exprs_file=get_matrix_path(task.data.uid), basename=task.data.uid, out_dir= get_wd(task.data.uid),
                                          verbose=False, save=True, load=False, clust_method=clust_method,
-                                         cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval, r=r,
+                                         cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval,
                                          alpha=alpha)
         task.finished_at = datetime.now()
         task.status = "Finishing"
