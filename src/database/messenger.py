@@ -5,12 +5,12 @@ sender = settings.EMAIL_ADDRESS
 
 
 def server_startup():
-    send_mail('Encore system startup', f'The encore backend is now ready!', sender,
+    send_mail('UnPaSt system startup', f'The UnPaSt backend is now ready!', sender,
               ['status@andimajore.de'], fail_silently=False)
 
 
 def error_notification(message):
-    send_mail('Error in encore-execution', f'Message: {message}', sender,
+    send_mail('Error in UnPaSt execution', f'Message: {message}', sender,
               ['status@andimajore.de'], True)
 
 
@@ -37,13 +37,13 @@ def send_notification(mail, error, uid=None):
         if not error:
             link = f"https://https://unpast.zbh.uni-hamburg.de/result/{uid}"
             send_mail('Your job has finished',
-                      f'The ENCORE bicluster computation has finished.\nCheck the results out here: {link}', sender,
+                      f'The UnPaSt bicluster computation has finished.\nCheck the results out here: {link}', sender,
                       [mail],
                       fail_silently=False)
         else:
             send_mail('Your job exited with an error',
-                      f'The ENCORE bicluster computation has terminated with an error.\n Please try again or contact the authors.',
+                      f'The UnPaSt bicluster computation has terminated with an error.\n Please try again or contact the authors.',
                       sender, [mail], fail_silently=False)
     except Exception as e:
-        print(f"ENCORE mailing service encountered an issue: {e}")
-        error_notification(f"ENCORE mailing service encountered an issue: {e}")
+        print(f"UnPaSt mailing service encountered an issue: {e}")
+        error_notification(f"UnPaSt mailing service encountered an issue: {e}")
