@@ -43,6 +43,10 @@ def upload_matrix(req) -> Response:
 
 
 @api_view(['GET'])
+def server_status(req) -> Response:
+    return Response("running")
+
+@api_view(['GET'])
 def remove_matrix(req) -> Response:
     try:
         uid = req.GET.get("id")
