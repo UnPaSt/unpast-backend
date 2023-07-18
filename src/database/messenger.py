@@ -35,7 +35,7 @@ def remove_notification(id):
 def send_notification(mail, error, uid=None):
     try:
         if not error:
-            link = f"https://unpast.zbh.uni-hamburg.de/result/{uid}"
+            link = f"https://apps.cosy.bio/unpast/result/{uid}"
             send_mail('Your job has finished',
                       f'The UnPaSt bicluster computation has finished.\nCheck the results out here: {link}', sender,
                       [mail],
