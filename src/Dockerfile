@@ -1,4 +1,4 @@
-FROM andimajore/miniconda3_mantic
+FROM andimajore/mamba_mantic
 WORKDIR /usr/src/unpast/
 #
 #ENV PYTHONDONTWRITEBYTECODE 1
@@ -10,7 +10,7 @@ RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y supervisor n
 RUN apt-get install -y --no-install-recommends libxt6
 
 RUN conda install python=3.8.13
-RUN conda install --override-channels -c conda-forge mamba 'python_abi=*=*cp*'
+RUN #conda install --override-channels -c conda-forge mamba 'python_abi=*=*cp*'
 RUN mamba install -c conda-forge -y r-base=3.6.3
 RUN mamba install -c conda-forge -y r-stringi r-stringr r-foreign
 
