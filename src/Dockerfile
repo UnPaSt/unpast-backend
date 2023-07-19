@@ -1,6 +1,6 @@
 FROM andimajore/miniconda3_mantic
 WORKDIR /usr/src/unpast/
-
+#
 #ENV PYTHONDONTWRITEBYTECODE 1
 #ENV PYTHONUNBUFFERED 1
 #ENV LC_ALL=C.UTF-8
