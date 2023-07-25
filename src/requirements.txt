@@ -7,3 +7,4 @@ django-cors-headers==3.11.0
 celery==5.1.2
 mysqlclient==2.1.0
 django-redis==5.2.0
+kneed==0.8.5
