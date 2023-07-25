@@ -38,8 +38,8 @@ def unpast_job(uid):
     r = 0.3 if 'r' not in params else params["r"]
     alpha = 1 if 'alpha' not in params else params['alpha']
     try:
-        from app import run_desmond
-        result = run_desmond.run_DESMOND(exprs_file=get_matrix_path(task.data.uid), basename=task.data.uid, out_dir= get_wd(task.data.uid),
+        from app import run_unpast
+        result = run_unpast.run(exprs_file=get_matrix_path(task.data.uid), basename=task.data.uid, out_dir= get_wd(task.data.uid),
                                          verbose=False, save=True, load=False, clust_method=clust_method,
                                          cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval,
                                          alpha=alpha)
