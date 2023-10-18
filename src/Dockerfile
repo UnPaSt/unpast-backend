@@ -1,4 +1,4 @@
-FROM andimajore/miniconda3_mantic
+FROM andimajore/mamba_mantic
 WORKDIR /usr/src/unpast/
 #
 #ENV PYTHONDONTWRITEBYTECODE 1
