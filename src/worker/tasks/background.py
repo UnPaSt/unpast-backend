@@ -28,7 +28,7 @@ def unpast_job(uid):
     task.started_at = datetime.now()
     task.status = "Running"
     task.save()
-    logger.info("Started Desmond2 execution of task " + uid)
+    logger.info("Started UnPaSt execution of task " + uid)
     params = json.loads(task.request)
 
     bin_method = 'GMM' if 'binarization' not in params else params['binarization']
@@ -48,13 +48,13 @@ def unpast_job(uid):
         task.save()
     except Exception as e:
         task.error = True
-        task.status = f'DESMOND2 execution {uid} exited with an error: {e}'
+        task.status = f'UnPaSt execution {uid} exited with an error: {e}'
         task.save()
-        error_notification(f'DESMOND2 execution {uid} exited with an error: {e}')
+        error_notification(f'UnPaSt execution {uid} exited with an error: {e}')
         logger.info(task.status)
         return
     task.result = result.to_json(orient='index')
     task.done = True
     task.status = "Done"
     task.save()
-    logger.info(f"DESMOND2 execution {uid} finished!")
+    logger.info(f"UnPaSt execution {uid} finished!")

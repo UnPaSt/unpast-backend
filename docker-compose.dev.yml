@@ -1,0 +1,113 @@
+version: '3.3'
+
+services:
+  app:
+    image: unpast_backend
+    container_name: unpast_backend
+    build: src/
+    env_file:
+      - 'environment/docker-django.env.dev'
+    restart: always
+    command:
+      - "bash"
+      - "./wait-for-it.sh"
+      - "unpast_db:3306"
+      - "-t"
+      - "30"
+      - "--"
+      - "bash"
+      - "./scripts/start_main_app.sh"
+    ports:
+      - 8002:8000
+    networks:
+      - unpast_net
+    volumes:
+      - unpast-cached-volume:/tmp
+    depends_on:
+      - db
+      - redis
+  celery:
+    command:
+      - "sh"
+      - "./scripts/start_celery_worker.sh"
+    restart: always
+    build: src/
+    container_name: unpast_worker
+    hostname: unpast_worker
+    env_file:
+      - 'environment/docker-django.env.dev'
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+    volumes:
+      - unpast-cached-volume:/tmp
+    networks:
+      - unpast_net
+  celery-beat:
+    command:
+      - "sh"
+      - "./scripts/start_celery_beat.sh"
+    build: src/
+    container_name: unpast_scheduler
+    hostname: unpast_scheduler
+    env_file:
+      - 'environment/docker-django.env.dev'
+    depends_on:
+      - redis
+      - db
+    networks:
+      - unpast_net
+  flower:
+    image: mher/flower
+    container_name: unpast_supervisor
+    env_file:
+       - 'environment/docker-django.env.dev'
+    ports:
+      - 8888:8888
+    networks:
+      - unpast_net
+  redis:
+    image: redis
+    restart: always
+    command: [ "redis-server" ]
+    container_name: unpast_redis
+    hostname: unpast_redis
+    networks:
+      - unpast_net
+    depends_on:
+      - db
+  rabbitmq:
+    image: rabbitmq:latest
+    restart: always
+    container_name: unpast_queue
+    hostname: unpast_queue
+    networks:
+      - unpast_net
+    env_file:
+      - 'environment/docker-django.env.dev'
+
+  db:
+    image: postgres
+    restart: always
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=10000"
+      - "-c"
+      - "shared_buffers=2GB"
+    container_name: unpast_db
+    hostname: unpast_db
+    volumes:
+      - unpast-db-volume:/var/lib/postgresql/data
+    networks:
+      - unpast_net
+    env_file:
+      - 'environment/docker-django.env.dev'
+
+volumes:
+  unpast-db-volume:
+  unpast-cached-volume:
+
+networks:
+  unpast_net:
