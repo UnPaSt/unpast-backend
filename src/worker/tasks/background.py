@@ -31,17 +31,19 @@ def unpast_job(uid):
     logger.info("Started UnPaSt execution of task " + uid)
     params = json.loads(task.request)
 
-    bin_method = 'GMM' if 'binarization' not in params else params['binarization']
-    clust_method = 'Louvain' if 'clustering' not in params else params['clustering']
+    bin_method = 'kmeans' if 'binarization' not in params else params['binarization']
+    clust_method = 'WGCNA' if 'clustering' not in params else params['clustering']
     seed = 42 if 'seed' not in params else params["seed"]
-    pval = 0.001 if 'pValue' not in params else params["pValue"]
-    r = 0.3 if 'r' not in params else params["r"]
-    alpha = 1 if 'alpha' not in params else params['alpha']
+    pval = 0.01 if 'pValue' not in params else params["pValue"]
+    directions = ['DOWN','UP'] if 'directions' not in params else params["directions"]
+    ceiling = 3 if 'ceiling' not in params else params["ceiling"]
+    ds = 3 if 'ds' not in params else params["ds"]
+    dch = 0.995 if 'dch' not in params else params["dch"]
     try:
         from app import run_unpast
         result = run_unpast.run(exprs_file=get_matrix_path(task.data.uid), basename=task.data.uid, out_dir=get_wd(task.data.uid),
                                          verbose=False, save=True, load=False, clust_method=clust_method,
-                                         cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval)
+                                         cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval,directions=directions, ceiling=ceiling, ds=ds, dch=dch)
         task.finished_at = datetime.now()
         task.status = "Finishing"
         task.save()
