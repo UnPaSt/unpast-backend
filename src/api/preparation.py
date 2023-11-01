@@ -23,6 +23,14 @@ def get_uid(model):
 def get_wd(uid):
     return os.path.join("/tmp", uid) + "/"
 
+def get_result_file(uid):
+    result_file = None
+    for file in os.path.listdir(get_wd(uid)):
+        if file.endswith(".binarization_stats.tsv"):
+            result_file = file
+            break
+    return os.path.join(get_wd(uid), result_file)
+
 
 def get_matrix_path(uid):
     return os.path.join(get_wd(uid), uid + ".matrix")
