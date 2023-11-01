@@ -34,7 +34,7 @@ def unpast_job(uid):
     bin_method = 'GMM' if 'binarization' not in params else params['binarization']
     clust_method = 'Louvain' if 'clustering' not in params else params['clustering']
     seed = 42 if 'seed' not in params else params["seed"]
-    pval = 0.001 if 'pval' not in params else params["pval"]
+    pval = 0.001 if 'pValue' not in params else params["pValue"]
     r = 0.3 if 'r' not in params else params["r"]
     alpha = 1 if 'alpha' not in params else params['alpha']
     try:
