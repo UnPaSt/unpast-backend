@@ -24,15 +24,7 @@ def get_wd(uid):
     return os.path.join("/tmp", uid) + "/"
 
 def get_result_file(uid):
-    result_file = None
-    wd = get_wd(uid)
-    if not os.path.exists(wd):
-        wd = wd.rstrip("/")+"_results/"
-    for file in os.listdir(wd):
-        if file.endswith(".binarization_stats.tsv"):
-            result_file = file
-            break
-    return os.path.join(get_wd(uid), result_file)
+    return os.path.join("/tmp", uid+"_biclusters.tsv")
 
 
 def get_matrix_path(uid):
