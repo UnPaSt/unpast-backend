@@ -4,7 +4,8 @@ DEBUG = (os.environ.get('DEBUG') == "1")
 
 ALLOWED_HOSTS = [
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
+    'apps.cosy.bio'
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:4200']
