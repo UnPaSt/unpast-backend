@@ -21,6 +21,9 @@ def clean_tasks():
     from database.models import Task
     for t in Task.objects.filter(started_at__isnull=True):
         if is_too_old(t.created_at):
+            new_wd = get_wd(t.uid).rstrip("/")+"_results/"
+            os.system(f"mkdir -p {new_wd}")
+            os.system(f"mv {get_wd(t.uid)}*.binarization_stats.tsv {new_wd}")
             os.system(f"rm -rf {get_wd(t.uid)}")
             t.delete()
 

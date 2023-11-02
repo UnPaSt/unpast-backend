@@ -136,21 +136,21 @@ def get_task(req) -> Response:
 @api_view(['GET'])
 def get_result(req) -> Response:
     uid = req.GET.get("id")
-    try:
-        filename = get_result_file(uid)
-        filepath = os.path.join('data', filename)
-        # Open the file for reading content
-        path = open(filepath, 'r')
-        # Set the mime type
-        mime_type, _ = mimetypes.guess_type(filepath)
-        # Set the return value of the HttpResponse
-        response = HttpResponse(path, content_type=mime_type)
-        # Set the HTTP header for sending to browser
-        response['Content-Disposition'] = "attachment; filename=%s" % filename
-        # Return the response value
-        return response
-    except:
-        return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    # try:
+    filename = get_result_file(uid)
+    filepath = os.path.join('data', filename)
+    # Open the file for reading content
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    # Return the response value
+    return response
+    # except:
+    #     return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 @never_cache
