@@ -142,10 +142,10 @@ def get_result(req) -> Response:
     task = Task.objects.get(uid=uid)
     result = json.loads(task.result)
 
-    result = pd.DataFrame.from_dict(result)
+    result = pd.DataFrame.from_dict(result).transpose()
     print(result)
     filepath = get_result_file(uid)
-    result.to_csv(filepath, sep="\t", index=False)
+    result.to_csv(filepath, sep="\t", index=True, header=True)
 
     try:
 
