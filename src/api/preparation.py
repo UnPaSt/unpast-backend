@@ -27,7 +27,7 @@ def get_result_file(uid):
     result_file = None
     wd = get_wd(uid)
     if not os.path.exists(wd):
-        wd = wd.lstrip("/")+"_results/"
+        wd = wd.rstrip("/")+"_results/"
     for file in os.listdir(wd):
         if file.endswith(".binarization_stats.tsv"):
             result_file = file
