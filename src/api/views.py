@@ -138,7 +138,7 @@ def get_result(req) -> Response:
     uid = req.GET.get("id")
 
     task = Task.objects.get(uid=uid)
-    result = json.loads(task.result, orient='index')
+    result = json.loads(task.result)
 
     print(result)
 
