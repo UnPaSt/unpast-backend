@@ -135,20 +135,16 @@ def get_task(req) -> Response:
 @never_cache
 @api_view(['GET'])
 def get_result(req) -> Response:
-
     import pandas as pd
     uid = req.GET.get("id")
 
-    task = Task.objects.get(uid=uid)
-    result = json.loads(task.result)
-
-    result = pd.DataFrame.from_dict(result).transpose()
-    print(result)
-    filepath = get_result_file(uid)
-    result.to_csv(filepath, sep="\t", index=True, header=True)
-
     try:
+        task = Task.objects.get(uid=uid)
+        result = json.loads(task.result)
 
+        result = pd.DataFrame.from_dict(result).transpose()
+        filepath = get_result_file(uid)
+        result.to_csv(filepath, sep="\t", index=True, header=True)
         # Open the file for reading content
         path = open(filepath, 'r')
         # Set the mime type
