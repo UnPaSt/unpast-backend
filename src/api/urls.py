@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import run_task, upload_matrix, remove_matrix, get_task, get_task_statuses, remove_task, get_task_data, download_example,server_status, get_result
+from .views import run_task, upload_matrix, remove_matrix, get_task, get_task_statuses, remove_task, get_task_data, \
+    download_example, server_status, get_result, get_log
 
 urlpatterns = [
     path('upload_matrix',upload_matrix),
