@@ -50,7 +50,7 @@ def unpast_job(uid):
     try:
         from app import run_unpast
         result = run_unpast.run(exprs_file=get_matrix_path(task.data.uid), basename=task.data.uid, out_dir=get_wd(task.data.uid),
-                                         verbose=False, save=True, load=False, clust_method=clust_method,
+                                         verbose=True, save=True, load=False, clust_method=clust_method,
                                          cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval,directions=directions, ceiling=ceiling, ds=ds, dch=dch)
         task.finished_at = datetime.now()
         task.status = "Finishing"
