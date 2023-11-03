@@ -134,6 +134,32 @@ def get_task(req) -> Response:
 
 @never_cache
 @api_view(['GET'])
+def get_log(req) -> Response:
+    uid = req.GET.get("id")
+    type = req.GET.get("type")
+    task = Task.objects.get(uid=uid)
+
+    if type == 'stderr':
+        content = task.std_err
+        file_name = uid + "_stderr.txt"
+    else:
+        content = task.std_out
+        file_name = uid + "_stdout.txt"
+
+    filepath = os.path.join("/tmp", file_name)
+
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % os.path.split(filepath)[1]
+    # Return the response value
+    return response
+
+@never_cache
+@api_view(['GET'])
 def get_result(req) -> Response:
     import pandas as pd
     uid = req.GET.get("id")

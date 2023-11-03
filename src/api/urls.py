@@ -11,5 +11,6 @@ urlpatterns = [
     path('get_task_statuses',get_task_statuses),
     path('download_example', download_example),
     path('server_status', server_status),
-    path('get_result',get_result)
+    path('get_result',get_result),
+    path('get_log',get_log)
 ]
