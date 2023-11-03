@@ -80,6 +80,8 @@ def unpast_job(uid):
 def read_logs_to_task(task, out_file, err_file):
     with open(out_file, 'r') as f:
         task.out_log = f.read()
+        print(task.out_log)
     with open(err_file, 'r') as f:
         task.err_log = f.read()
+        print(task.err_log)
     task.save()
