@@ -10,17 +10,15 @@ RUN apt-get update && apt-get update -y
 RUN apt-get install -y supervisor nginx mysql-client default-libmysqlclient-dev build-essential
 RUN apt-get install -y --no-install-recommends libxt6
 
-RUN conda install python=3.8
+RUN conda install python=3.8.13
 RUN #pip install --upgrade pip mamba
 RUN #conda install --override-channels -c conda-forge mamba 'python_abi=*=*cp*'
 RUN conda install -c conda-forge -y r-base=3.6.3
-RUN conda install -c conda-forge -y r-stringi r-stringr r-foreign
+RUN conda install -c conda-forge -y r-stringi r-stringr r-foreign r-wgcna
 
 RUN pip install django==4.0.4 psycopg2-binary
 
-RUN R -e "chooseCRANmirror(ind=1) ; install.packages('BiocManager') ; BiocManager::install('WGCNA', update= FALSE)"
-
-RUN #conda install -y mysqlclient
+RUN #R -e "chooseCRANmirror(ind=1) ; install.packages('BiocManager') ; BiocManager::install('WGCNA', update= FALSE)"
 
 COPY ./requirements.txt /usr/src/unpast/requirements.txt
 RUN pip install -r /usr/src/unpast/requirements.txt
