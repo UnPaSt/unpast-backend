@@ -140,13 +140,16 @@ def get_log(req) -> Response:
     task = Task.objects.get(uid=uid)
 
     if type == 'stderr':
-        content = task.std_err
+        content = task.err_log
         file_name = uid + "_stderr.txt"
     else:
-        content = task.std_out
+        content = task.out_log
         file_name = uid + "_stdout.txt"
 
     filepath = os.path.join("/tmp", file_name)
+
+    with open(filepath, 'w') as f:
+        f.write(content)
 
     path = open(filepath, 'r')
     # Set the mime type
