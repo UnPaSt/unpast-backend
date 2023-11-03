@@ -39,6 +39,14 @@ def unpast_job(uid):
     ceiling = 3 if 'ceiling' not in params else params["ceiling"]
     ds = 3 if 'ds' not in params else params["ds"]
     dch = 0.995 if 'dch' not in params else params["dch"]
+    import sys
+    orig_stdout = sys.stdout
+    f = open(os.path.join(get_wd(uid), 'log.txt'), 'w')
+    sys.stdout = f
+
+    orig_stderr = sys.stderr
+    f_err = open(os.path.join(get_wd(uid), 'log_err.txt'), 'w')
+    sys.stderr = f_err
     try:
         from app import run_unpast
         result = run_unpast.run(exprs_file=get_matrix_path(task.data.uid), basename=task.data.uid, out_dir=get_wd(task.data.uid),
@@ -53,9 +61,25 @@ def unpast_job(uid):
         task.save()
         error_notification(f'UnPaSt execution {uid} exited with an error: {e}')
         logger.info(task.status)
+
+    sys.stdout = orig_stdout
+    f.close()
+    sys.stderr = orig_stderr
+    f_err.close()
+    read_logs_to_task(task, os.path.join(get_wd(uid), 'log.txt'), os.path.join(get_wd(uid), 'log_err.txt'))
+    if task.error:
         return
+
     task.result = result.to_json(orient='index')
     task.done = True
     task.status = "Done"
     task.save()
     logger.info(f"UnPaSt execution {uid} finished!")
+
+
+def read_logs_to_task(task, out_file, err_file):
+    with open(out_file, 'r') as f:
+        task.out_log = f.read()
+    with open(err_file, 'r') as f:
+        task.err_log = f.read()
+    task.save()

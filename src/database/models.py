@@ -24,6 +24,9 @@ class Task(models.Model):
     done = models.BooleanField(default=False)
     error = models.BooleanField(default=False)
 
+    out_log = models.TextField(null=True)
+    err_log = models.TextField(null=True)
+
     request = models.TextField(null=True)
     result = models.TextField(null=True)
 
