@@ -21,6 +21,12 @@ def get_matrix_path(uid):
     return os.path.join(get_wd(uid), uid + ".matrix")
 
 
+def get_result_file_path(wd):
+    for file in os.listdir(wd):
+        if file.endswith(".biclusters.tsv"):
+            return os.path.join(wd, file)
+    return None
+
 @app.task(name='unpast-run')
 def unpast_job(uid):
     from database.models import Task
@@ -53,6 +59,8 @@ def unpast_job(uid):
                                          verbose=True, save=True, load=False, clust_method=clust_method,
                                          cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval,directions=directions, ceiling=ceiling, ds=ds, dch=dch)
         task.finished_at = datetime.now()
+        with open(get_result_file_path(get_wd(task.data.uid)), 'r') as f:
+            task.result_file = f.read()
         task.status = "Finishing"
         task.save()
     except Exception as e:

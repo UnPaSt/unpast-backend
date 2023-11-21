@@ -30,6 +30,8 @@ class Task(models.Model):
     request = models.TextField(null=True)
     result = models.TextField(null=True)
 
+    result_file = models.TextField(null=True)
+
     data = models.ForeignKey(
         to='Data',
         on_delete=models.SET_NULL,

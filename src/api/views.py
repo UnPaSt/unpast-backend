@@ -169,11 +169,13 @@ def get_result(req) -> Response:
 
     try:
         task = Task.objects.get(uid=uid)
-        result = json.loads(task.result)
+        result = task.result_file
 
-        result = pd.DataFrame.from_dict(result).transpose()
+        # result = pd.DataFrame.from_dict(result).transpose()
         filepath = get_result_file(uid)
-        result.to_csv(filepath, sep="\t", index=True, header=True)
+        with open(filepath, 'w') as fh:
+            fh.write(result)
+        # result.to_csv(filepath, sep="\t", index=True, header=True)
         # Open the file for reading content
         path = open(filepath, 'r')
         # Set the mime type
