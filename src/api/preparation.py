@@ -73,6 +73,7 @@ def read_input(data: Data):
 
 def get_formatted_input(data: Data, result):
     df = read_input(data)
+    df.index = df.index.astype('string')
     result_genes = set(itertools.chain(*[bicluster['genes'] for bicluster in result.values()]))
     result_samples = set(itertools.chain(*[bicluster['samples'] for bicluster in result.values()]))
     df = df.filter(result_samples)
