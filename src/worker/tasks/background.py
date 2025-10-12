@@ -54,10 +54,10 @@ def unpast_job(uid):
     f_err = open(os.path.join(get_wd(uid), 'log_err.txt'), 'w')
     sys.stderr = f_err
     try:
-        from app import run_unpast
-        result = run_unpast.run(exprs_file=get_matrix_path(task.data.uid), basename=task.data.uid, out_dir=get_wd(task.data.uid),
-                                         verbose=True, save=True, load=False, clust_method=clust_method,
-                                         cluster_binary=False, bin_method=bin_method, seed=seed, pval=pval,directions=directions, ceiling=ceiling, ds=ds, dch=dch)
+        from app.unpast import run_unpast
+        result = run_unpast.unpast(exprs_file=get_matrix_path(task.data.uid), out_dir=get_wd(task.data.uid),
+                                         verbose=True, clust_method=clust_method,
+                                         bin_method=bin_method, seed=seed, pval=pval,directions=directions, ceiling=ceiling, ds=ds, dch=dch)
         task.finished_at = datetime.now()
         with open(get_result_file_path(get_wd(task.data.uid)), 'r') as f:
             task.result_file = f.read()
