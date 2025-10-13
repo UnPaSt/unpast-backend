@@ -27,16 +27,18 @@ RUN pip install -r /usr/src/unpast/unpast_requirements.txt
 
 COPY . /usr/src/unpast/
 
-RUN mv /usr/src/unpast/app/unpast/utils /usr/src/unpast/
-
 WORKDIR /usr/src/unpast/
 
-# Install the unpast package from the submodule
+# Install the unpast package from the submodule FIRST
 RUN echo "Installing unpast package from submodule..." && \
     cd /usr/src/unpast/app && \
     pip install -e . && \
     python -c "import unpast; print(f'unpast version: {unpast.__version__}')" && \
     echo "unpast package installed successfully!"
+
+# Create symlink for Django app to access utils (don't move, to preserve package structure)
+RUN ln -s /usr/src/unpast/app/unpast/utils /usr/src/unpast/utils && \
+    echo "Created symlink: /usr/src/unpast/utils -> /usr/src/unpast/app/unpast/utils"
 
 RUN python -m install_r_dependencies
 
