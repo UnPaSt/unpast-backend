@@ -18,7 +18,7 @@ services:
       - "bash"
       - "./scripts/start_main_app.sh"
     ports:
-      - 8082:8000
+      - 8002:8000
     networks:
       - unpast_net
     volumes:
