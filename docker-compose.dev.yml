@@ -11,7 +11,7 @@ services:
     command:
       - "bash"
       - "./wait-for-it.sh"
-      - "unpast_db:3306"
+      - "unpast_db:5432"
       - "-t"
       - "30"
       - "--"

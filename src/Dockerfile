@@ -31,6 +31,13 @@ RUN mv /usr/src/unpast/app/unpast/utils /usr/src/unpast/
 
 WORKDIR /usr/src/unpast/
 
+# Install the unpast package from the submodule
+RUN echo "Installing unpast package from submodule..." && \
+    cd /usr/src/unpast/app && \
+    pip install -e . && \
+    python -c "import unpast; print(f'unpast version: {unpast.__version__}')" && \
+    echo "unpast package installed successfully!"
+
 RUN python -m install_r_dependencies
 
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
