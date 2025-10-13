@@ -1,4 +1,4 @@
-FROM continuumio/miniconda3:latest
+FROM continuumio/miniconda3:23.5.2-0
 WORKDIR /usr/src/unpast/
 #
 #ENV PYTHONDONTWRITEBYTECODE 1
@@ -14,7 +14,8 @@ RUN conda install python=3.10
 #RUN conda install -c conda-forge -y r-base=3.6.3
 #RUN conda install -c conda-forge -y r-stringi r-stringr r-foreign r-wgcna
 
-RUN pip install django==4.0.4 psycopg2-binary numpy==1.22.3
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install django==4.0.4 psycopg2-binary
 
 RUN #R -e "chooseCRANmirror(ind=1) ; install.packages('BiocManager') ; BiocManager::install('WGCNA', update= FALSE)"
 
