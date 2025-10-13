@@ -31,6 +31,17 @@ def get_result_file_path(wd):
 def unpast_job(uid):
     from database.models import Task
     task = Task.objects.get(uid=uid)
+
+    # Check if task has associated data
+    if task.data is None or task.data.uid is None:
+        error_msg = f"Task {uid} has no associated data (task.data is None)"
+        task.error = True
+        task.status = f'UnPaSt execution {uid} exited with an error: {error_msg}'
+        task.save()
+        error_notification(task.status)
+        logger.error(task.status)
+        return
+
     task.started_at = datetime.now()
     task.status = "Running"
     task.save()
