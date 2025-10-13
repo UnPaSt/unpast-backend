@@ -31,10 +31,31 @@ jobs:
         run: |
           echo "Checking submodule..."
           git submodule status
+          echo ""
+          echo "Verifying src/app directory..."
           ls -la src/app/ || (echo "ERROR: Submodule not initialized!" && exit 1)
+          echo ""
+          echo "Checking for Python files in submodule..."
+          find src/app -name "*.py" | head -5 || (echo "ERROR: Submodule has no Python files!" && exit 1)
+          echo ""
+          echo "Checking requirements.txt in submodule..."
+          ls -lh src/app/requirements.txt || (echo "ERROR: Submodule requirements.txt missing!" && exit 1)
+
+      - name: Verify build context
+        run: |
+          echo "Files in build context (src/):"
+          ls -lah src/
+          echo ""
+          echo "Files in src/app/ (submodule):"
+          ls -lah src/app/ | head -15
+          echo ""
+          echo "Python package structure:"
+          find src/app/unpast -type f -name "*.py" | head -10 || echo "Warning: unpast package not found"
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
 
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
@@ -63,6 +84,7 @@ jobs:
         with:
           context: ./src
           file: ./src/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
