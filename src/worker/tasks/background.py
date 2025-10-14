@@ -70,8 +70,16 @@ def unpast_job(uid):
                                          verbose=True, clust_method=clust_method,
                                          bin_method=bin_method, seed=seed, pval=pval,directions=directions, ceiling=ceiling, ds=ds, dch=dch)
         task.finished_at = datetime.now()
-        with open(get_result_file_path(get_wd(task.data.uid)), 'r') as f:
-            task.result_file = f.read()
+
+        # Check if result file exists (may not exist if no biclusters found)
+        result_file = get_result_file_path(get_wd(task.data.uid))
+        if result_file:
+            with open(result_file, 'r') as f:
+                task.result_file = f.read()
+        else:
+            logger.warning(f"No biclusters file found for task {uid} - UnPaSt may not have found any biclusters")
+            task.result_file = None
+
         task.status = "Finishing"
         task.save()
     except Exception as e:

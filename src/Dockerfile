@@ -7,17 +7,14 @@ WORKDIR /usr/src/unpast/
 #ENV LANG=C.UTF-8
 
 RUN apt-get update && apt-get update -y
+# Install r-base from apt (will be 4.0.4 on Debian bullseye)
 RUN apt-get install -y supervisor nginx postgresql-client libpq-dev build-essential libcurl4-openssl-dev libssl-dev r-base
 RUN apt-get install -y --no-install-recommends libxt6
 
 RUN conda install python=3.10
-#RUN conda install -c conda-forge -y r-base=3.6.3
-#RUN conda install -c conda-forge -y r-stringi r-stringr r-foreign r-wgcna
 
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install django==4.0.4 psycopg2-binary
-
-RUN #R -e "chooseCRANmirror(ind=1) ; install.packages('BiocManager') ; BiocManager::install('WGCNA', update= FALSE)"
 
 COPY ./requirements.txt /usr/src/unpast/requirements.txt
 RUN pip install -r /usr/src/unpast/requirements.txt
