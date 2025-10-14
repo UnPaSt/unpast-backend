@@ -7,9 +7,18 @@ WORKDIR /usr/src/unpast/
 #ENV LANG=C.UTF-8
 
 RUN apt-get update && apt-get update -y
-# Install r-base from apt (will be 4.0.4 on Debian bullseye)
-RUN apt-get install -y supervisor nginx postgresql-client libpq-dev build-essential libcurl4-openssl-dev libssl-dev r-base
+# Install dependencies first (but not r-base yet)
+RUN apt-get install -y supervisor nginx postgresql-client libpq-dev build-essential libcurl4-openssl-dev libssl-dev
 RUN apt-get install -y --no-install-recommends libxt6
+
+# Install R 4.3+ from CRAN repository (needed for WGCNA/Hmisc)
+# Skip GPG verification for CRAN repo in Docker build environment
+RUN echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" > /etc/apt/sources.list.d/cran.list && \
+    echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure && \
+    echo 'Acquire::AllowDowngradeToInsecureRepositories "true";' >> /etc/apt/apt.conf.d/99allow-insecure && \
+    apt-get update --allow-insecure-repositories && \
+    apt-get install -y --allow-unauthenticated r-base r-base-dev && \
+    R --version | head -1
 
 RUN conda install python=3.10
 

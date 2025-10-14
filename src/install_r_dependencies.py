@@ -101,19 +101,18 @@ def install_cran_package(package):
 
 if __name__ == "__main__":
     if check_r_installation():
+        # Check R version
+        result = subprocess.run(["R", "--version"], capture_output=True, text=True)
+        print("R version info:")
+        print(result.stdout.split('\n')[0])
+        print()
+
         install_bioc_manager()
 
-        # Try installing WGCNA (optional - UnPaSt can use Louvain clustering instead)
-        try:
-            install_cran_package('Hmisc')  # WGCNA dependency
-            install_r_library('WGCNA')
-            print("✓ WGCNA installed successfully")
-        except:
-            print("=" * 80)
-            print("WARNING: WGCNA installation failed (expected with R 4.0.4)")
-            print("UnPaSt will use Louvain clustering method instead of WGCNA")
-            print("To use WGCNA, specify -c Louvain in your analysis parameters")
-            print("=" * 80)
+        # Install Hmisc from CRAN (WGCNA dependency)
+        # This requires R >= 4.2.0
+        install_cran_package('Hmisc')
 
-        # Install limma (required)
-        install_r_library('limma')
+        # Install WGCNA and limma via BiocManager
+        for library in ['WGCNA', 'limma']:
+            install_r_library(library)
