@@ -169,9 +169,10 @@ def get_result(req) -> Response:
 
     # try:
     task = Task.objects.get(uid=uid)
-    result = task.result
+    result_string = task.result
+    result_dict = json.loads(result_string)
 
-    result = pd.DataFrame.from_dict(result).transpose()
+    result = pd.DataFrame.from_dict(result_dict).transpose()
     filepath = get_result_file(uid)
     # with open(filepath, 'w') as fh:
         # fh.write(result)
