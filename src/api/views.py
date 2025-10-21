@@ -171,7 +171,7 @@ def get_result(req) -> Response:
     task = Task.objects.get(uid=uid)
     result = task.result
 
-    # result = pd.DataFrame.from_dict(result).transpose()
+    result = pd.DataFrame.from_dict(result).transpose()
     filepath = get_result_file(uid)
     # with open(filepath, 'w') as fh:
         # fh.write(result)
