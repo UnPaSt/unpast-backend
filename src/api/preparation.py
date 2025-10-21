@@ -1,3 +1,5 @@
+import gzip
+import shutil
 from fileinput import filename
 import json
 import os
@@ -37,12 +39,26 @@ def save_file(uid, request: Request):
     print(og_filename)
     Data.objects.create(uid=uid, filename=og_filename, location=path)
 
+def uncompress_file(path, filename, file_ending):
+    dest_file = filename[:-len(file_ending)]
+    dest_file += ".tsv" if ".tsv" and ".txt" not in dest_file else ""
+    if file_ending == ".gz" or file_ending == ".gzip":
+        with gzip.open(os.path.join(path, filename), 'rb') as f_in:
+            with open(os.path.join(path, dest_file), 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+    return os.path.join(path, dest_file)
+
 
 def write_file(uid, file):
     fs = FileSystemStorage(location=get_wd(uid))
     filename = fs.save(uid, file)
+    splits = filename.split(".")
+    file_ending = splits[-1]
+    filepath = os.path.join(get_wd(uid), filename)
+    if file_ending == "gzip" or file_ending=="gz":
+        filepath = uncompress_file(os.path.join(get_wd(uid)), filename, file_ending)
     path = get_matrix_path(uid)
-    os.system("mv " + os.path.join(get_wd(uid), filename) + " " + get_matrix_path(uid))
+    os.system(f"mv '{filepath}' {path}")
     return file.name, path
 
 

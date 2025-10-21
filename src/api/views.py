@@ -167,27 +167,27 @@ def get_result(req) -> Response:
     import pandas as pd
     uid = req.GET.get("id")
 
-    try:
-        task = Task.objects.get(uid=uid)
-        result = task.result_file
+    # try:
+    task = Task.objects.get(uid=uid)
+    result = task.result_file
 
-        # result = pd.DataFrame.from_dict(result).transpose()
-        filepath = get_result_file(uid)
-        with open(filepath, 'w') as fh:
-            fh.write(result)
-        # result.to_csv(filepath, sep="\t", index=True, header=True)
-        # Open the file for reading content
-        path = open(filepath, 'r')
-        # Set the mime type
-        mime_type, _ = mimetypes.guess_type(filepath)
-        # Set the return value of the HttpResponse
-        response = HttpResponse(path, content_type=mime_type)
-        # Set the HTTP header for sending to browser
-        response['Content-Disposition'] = "attachment; filename=%s" % os.path.split(filepath)[1]
-        # Return the response value
-        return response
-    except:
-        return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    # result = pd.DataFrame.from_dict(result).transpose()
+    filepath = get_result_file(uid)
+    with open(filepath, 'w') as fh:
+        fh.write(result)
+    # result.to_csv(filepath, sep="\t", index=True, header=True)
+    # Open the file for reading content
+    path = open(filepath, 'r')
+    # Set the mime type
+    mime_type, _ = mimetypes.guess_type(filepath)
+    # Set the return value of the HttpResponse
+    response = HttpResponse(path, content_type=mime_type)
+    # Set the HTTP header for sending to browser
+    response['Content-Disposition'] = "attachment; filename=%s" % os.path.split(filepath)[1]
+    # Return the response value
+    return response
+    # except:
+    #     return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 @never_cache
