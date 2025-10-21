@@ -28,38 +28,34 @@ def get_wd(uid):
 def get_result_file(uid):
     return os.path.join("/tmp", uid+"_biclusters.tsv")
 
-
 def get_matrix_path(uid):
     return os.path.join(get_wd(uid), uid + ".matrix")
-
 
 def save_file(uid, request: Request):
     os.mkdir(get_wd(uid))
     og_filename, path = write_file(uid, request.FILES.get('file'))
-    print(og_filename)
     Data.objects.create(uid=uid, filename=og_filename, location=path)
 
 def uncompress_file(path, filename, file_ending):
-    dest_file = filename[:-len(file_ending)]
-    dest_file += ".tsv" if ".tsv" and ".txt" not in dest_file else ""
     if file_ending == "gz" or file_ending == "gzip":
         with gzip.open(os.path.join(path, filename), 'rb') as f_in:
-            with open(os.path.join(path, dest_file), 'wb') as f_out:
+            with open(os.path.join(path, filename+"_uncompressed"), 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
-    return os.path.join(path, dest_file)
+                os.remove(os.path.join(path, filename))
+    return filename+"_uncompressed"
 
 
 def write_file(uid, file):
     fs = FileSystemStorage(location=get_wd(uid))
     filename = fs.save(uid, file)
-    splits = filename.split(".")
+    splits = file.name.split(".")
     file_ending = splits[-1]
-    filepath = os.path.join(get_wd(uid), filename)
     if file_ending == "gzip" or file_ending=="gz":
-        filepath = uncompress_file(os.path.join(get_wd(uid)), filename, file_ending)
-    path = get_matrix_path(uid)
-    os.system(f"mv '{filepath}' {path}")
-    return file.name, path
+        filename = uncompress_file(get_wd(uid), filename, file_ending)
+    filepath = os.path.join(get_wd(uid), filename)
+    matrixpath = get_matrix_path(uid)
+    os.system(f"mv '{filepath}' {matrixpath}")
+    return file.name, matrixpath
 
 
 def store_mail(uid, email):

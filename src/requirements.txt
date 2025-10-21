@@ -1,4 +1,4 @@
-djangorestframework==3.13.1
+djangorestframework>=3.15.2
 djangorestframework-camel-case==1.1.2
 entrypoints==0.3
 requests>=2.32.4
