@@ -42,7 +42,7 @@ def save_file(uid, request: Request):
 def uncompress_file(path, filename, file_ending):
     dest_file = filename[:-len(file_ending)]
     dest_file += ".tsv" if ".tsv" and ".txt" not in dest_file else ""
-    if file_ending == ".gz" or file_ending == ".gzip":
+    if file_ending == "gz" or file_ending == "gzip":
         with gzip.open(os.path.join(path, filename), 'rb') as f_in:
             with open(os.path.join(path, dest_file), 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)

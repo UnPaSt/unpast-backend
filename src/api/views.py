@@ -169,7 +169,7 @@ def get_result(req) -> Response:
 
     # try:
     task = Task.objects.get(uid=uid)
-    result = task.result_file
+    result = task.result
 
     # result = pd.DataFrame.from_dict(result).transpose()
     filepath = get_result_file(uid)
