@@ -1,24 +1,52 @@
-FROM continuumio/miniconda3:23.5.2-0
-WORKDIR /usr/src/unpast/
-#
-#ENV PYTHONDONTWRITEBYTECODE 1
-#ENV PYTHONUNBUFFERED 1
-#ENV LC_ALL=C.UTF-8
-#ENV LANG=C.UTF-8
+FROM debian:bullseye AS unpast_base
 
-RUN apt-get update && apt-get update -y
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y supervisor libgtk-3-dev wget apt-utils
+RUN apt update && apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common cron unzip
+RUN apt-get autoclean -y && apt-get autoremove -y && apt-get clean -y
+
+ENV CONDA_DIR /opt/conda
+RUN wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+RUN bash Miniforge3-$(uname)-$(uname -m).sh -b -p "${CONDA_DIR}"
+ENV PATH=$CONDA_DIR/bin:$PATH
+RUN chmod +x "${CONDA_DIR}/etc/profile.d/conda.sh"
+RUN "${CONDA_DIR}/etc/profile.d/conda.sh"
+RUN chmod +x "${CONDA_DIR}/etc/profile.d/mamba.sh"
+RUN "${CONDA_DIR}/etc/profile.d/mamba.sh"
+
+RUN conda init bash
+
+RUN mamba update -n base -c defaults mamba conda
+RUN mamba install -y python=3.10
+RUN mamba update -y --all
+RUN pip install pip==23
+RUN pip install --upgrade pip requests cryptography pyopenssl
+RUN chmod 777 -R /opt/conda
+
 # Install dependencies first (but not r-base yet)
 RUN apt-get install -y supervisor nginx postgresql-client libpq-dev build-essential libcurl4-openssl-dev libssl-dev
 RUN apt-get install -y --no-install-recommends libxt6
 
 # Install R 4.3+ from CRAN repository (needed for WGCNA/Hmisc)
 # Skip GPG verification for CRAN repo in Docker build environment
-RUN echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" > /etc/apt/sources.list.d/cran.list && \
-    echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure && \
-    echo 'Acquire::AllowDowngradeToInsecureRepositories "true";' >> /etc/apt/apt.conf.d/99allow-insecure && \
-    apt-get update --allow-insecure-repositories && \
-    apt-get install -y --allow-unauthenticated r-base r-base-dev && \
-    R --version | head -1
+RUN echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" > /etc/apt/sources.list.d/cran.list
+RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure
+RUN echo 'Acquire::AllowDowngradeToInsecureRepositories "true";' >> /etc/apt/apt.conf.d/99allow-insecure
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
+RUN apt-get update && apt-get install -y r-base-dev && apt-get install -y r-base
+RUN R --version | head -1
+
+
+RUN apt-get remove -y wget curl
+
+FROM unpast_base
+WORKDIR /usr/src/unpast/
 
 RUN conda install python=3.10
 
