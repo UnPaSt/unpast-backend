@@ -51,7 +51,7 @@ WORKDIR /usr/src/unpast/
 RUN conda install python=3.10
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install django==4.0.4 psycopg2-binary
+RUN pip install django==4.2.28 psycopg2-binary
 
 COPY ./requirements.txt /usr/src/unpast/requirements.txt
 RUN pip install -r /usr/src/unpast/requirements.txt
