@@ -7,8 +7,8 @@ ENV LANG=C.UTF-8
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y supervisor libgtk-3-dev wget apt-utils
-RUN apt update && apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common cron unzip
+RUN apt-get update && apt-get install -y supervisor libgtk-3-dev wget apt-utils
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common cron unzip
 RUN apt-get autoclean -y && apt-get autoremove -y && apt-get clean -y
 
 ENV CONDA_DIR /opt/conda
