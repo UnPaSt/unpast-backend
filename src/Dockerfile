@@ -1,4 +1,4 @@
-FROM debian:11 AS unpast_base
+FROM debian:13 AS unpast_base
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -8,7 +8,13 @@ ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && apt-get install -y supervisor libgtk-3-dev wget apt-utils
-RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common cron unzip
+RUN apt-get update && apt-get install -y apt-transport-https
+RUN apt-get update && apt-get install -y ca-certificates
+RUN apt-get update && apt-get install -y curl
+RUN apt-get update && apt-get install -y gnupg
+RUN apt-get update && apt-get install -y lsb-release
+RUN apt-get update && apt-get install -y cron
+RUN apt-get update && apt-get install -y unzip
 RUN apt-get autoclean -y && apt-get autoremove -y && apt-get clean -y
 
 ENV CONDA_DIR /opt/conda
@@ -35,10 +41,10 @@ RUN apt-get install -y --no-install-recommends libxt6
 
 # Install R 4.3+ from CRAN repository (needed for WGCNA/Hmisc)
 # Skip GPG verification for CRAN repo in Docker build environment
-RUN echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" > /etc/apt/sources.list.d/cran.list
-RUN echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure
-RUN echo 'Acquire::AllowDowngradeToInsecureRepositories "true";' >> /etc/apt/apt.conf.d/99allow-insecure
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
+RUN #echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" > /etc/apt/sources.list.d/cran.list
+RUN #echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure
+RUN #echo 'Acquire::AllowDowngradeToInsecureRepositories "true";' >> /etc/apt/apt.conf.d/99allow-insecure
+RUN #apt-key adv --keyserver keyserver.ubuntu.com --recv-keys '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
 RUN apt-get update && apt-get install -y r-base-dev && apt-get install -y r-base
 RUN R --version | head -1
 
