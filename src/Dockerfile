@@ -37,6 +37,7 @@ RUN chmod 777 -R /opt/conda
 
 # Install dependencies first (but not r-base yet)
 RUN apt-get install -y supervisor nginx postgresql-client libpq-dev build-essential libcurl4-openssl-dev libssl-dev
+RUN apt-get install -y libxml2-dev libssl-dev libcurl4-openssl-dev fontconfig libfontconfig1-dev libuv1-dev libnode-dev libv8-dev libnlopt-dev
 RUN apt-get install -y --no-install-recommends libxt6
 
 # Install R 4.3+ from CRAN repository (needed for WGCNA/Hmisc)
