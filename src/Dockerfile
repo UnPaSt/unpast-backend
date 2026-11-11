@@ -50,7 +50,7 @@ RUN apt-get remove -y wget curl
 FROM unpast_base
 WORKDIR /usr/src/unpast/
 
-RUN conda install python=3.10
+RUN conda install python=3.11
 
 RUN pip install --upgrade pip setuptools wheel
 
