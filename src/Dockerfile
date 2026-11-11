@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y gnupg
 RUN apt-get update && apt-get install -y lsb-release
 RUN apt-get update && apt-get install -y cron
 RUN apt-get update && apt-get install -y unzip
+RUN apt-get update && apt-get install -y unbound
 RUN apt-get autoclean -y && apt-get autoremove -y && apt-get clean -y
 
 ENV CONDA_DIR /opt/conda
@@ -29,7 +30,7 @@ RUN "${CONDA_DIR}/etc/profile.d/mamba.sh"
 RUN conda init bash
 
 RUN mamba update -n base -c defaults mamba conda
-RUN mamba install -y python=3.10
+RUN mamba install -y python=3.11
 RUN mamba update -y --all
 RUN pip install pip==23
 RUN pip install --upgrade pip requests pyopenssl
@@ -40,12 +41,6 @@ RUN apt-get install -y supervisor nginx postgresql-client libpq-dev build-essent
 RUN apt-get install -y libxml2-dev libssl-dev libcurl4-openssl-dev fontconfig libfontconfig1-dev libuv1-dev libnode-dev libv8-dev libnlopt-dev
 RUN apt-get install -y --no-install-recommends libxt6
 
-# Install R 4.3+ from CRAN repository (needed for WGCNA/Hmisc)
-# Skip GPG verification for CRAN repo in Docker build environment
-RUN #echo "deb https://cloud.r-project.org/bin/linux/debian bullseye-cran40/" > /etc/apt/sources.list.d/cran.list
-RUN #echo 'Acquire::AllowInsecureRepositories "true";' > /etc/apt/apt.conf.d/99allow-insecure
-RUN #echo 'Acquire::AllowDowngradeToInsecureRepositories "true";' >> /etc/apt/apt.conf.d/99allow-insecure
-RUN #apt-key adv --keyserver keyserver.ubuntu.com --recv-keys '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
 RUN apt-get update && apt-get install -y r-base-dev && apt-get install -y r-base
 RUN R --version | head -1
 
@@ -58,22 +53,27 @@ WORKDIR /usr/src/unpast/
 RUN conda install python=3.10
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install django==4.2.28 psycopg2-binary
 
-COPY ./requirements.txt /usr/src/unpast/requirements.txt
-RUN pip install -r /usr/src/unpast/requirements.txt
+# Poetry gets its own venv so it cannot clash with the application's dependencies.
+# The dependencies themselves are installed into the conda python (no project venv).
+ENV POETRY_VERSION=2.5.1
+ENV POETRY_HOME=/opt/poetry
+ENV POETRY_VIRTUALENVS_CREATE=false
+ENV POETRY_NO_INTERACTION=1
+RUN python -m venv "${POETRY_HOME}" && \
+    "${POETRY_HOME}/bin/pip" install "poetry==${POETRY_VERSION}" && \
+    ln -s "${POETRY_HOME}/bin/poetry" /usr/local/bin/poetry
 
-COPY ./app/requirements.txt /usr/src/unpast/unpast_requirements.txt
-RUN pip install -r /usr/src/unpast/unpast_requirements.txt
+# Install the locked third-party dependencies first (cached unless the lock changes).
+# --no-directory skips the unpast submodule (path dependency), which is copied below.
+COPY ./pyproject.toml ./poetry.lock /usr/src/unpast/
+RUN poetry install --no-directory
 
 COPY . /usr/src/unpast/
 
-WORKDIR /usr/src/unpast/
-
-# Install the unpast package from the submodule FIRST
+# Install the unpast package from the submodule (editable path dependency)
 RUN echo "Installing unpast package from submodule..." && \
-    cd /usr/src/unpast/app && \
-    pip install -e . && \
+    poetry install && \
     python -c "import unpast; print(f'unpast version: {unpast.__version__}')" && \
     echo "unpast package installed successfully!"
 
